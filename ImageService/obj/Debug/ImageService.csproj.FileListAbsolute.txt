@@ -1,0 +1,9 @@
+C:\Users\David\Desktop\C#\Ex1\ImageService\ImageService\bin\Debug\ImageService.exe.config
+C:\Users\David\Desktop\C#\Ex1\ImageService\ImageService\bin\Debug\ImageService.exe
+C:\Users\David\Desktop\C#\Ex1\ImageService\ImageService\bin\Debug\ImageService.pdb
+C:\Users\David\Desktop\C#\Ex1\ImageService\ImageService\obj\Debug\ImageService.ImageService.resources
+C:\Users\David\Desktop\C#\Ex1\ImageService\ImageService\obj\Debug\ImageService.ProjectInstaller.resources
+C:\Users\David\Desktop\C#\Ex1\ImageService\ImageService\obj\Debug\ImageService.csproj.GenerateResource.cache
+C:\Users\David\Desktop\C#\Ex1\ImageService\ImageService\obj\Debug\ImageService.csproj.CoreCompileInputs.cache
+C:\Users\David\Desktop\C#\Ex1\ImageService\ImageService\obj\Debug\ImageService.exe
+C:\Users\David\Desktop\C#\Ex1\ImageService\ImageService\obj\Debug\ImageService.pdb
