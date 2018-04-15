@@ -13,8 +13,10 @@ namespace ImageService.Server
 {
     public class ImageServer
     {
-        public event EventHandler<CommandRecievedEventArgs> SendCommand;
+        
         public event EventHandler<DirectoryCloseEventArgs> StopHandler;
+        // in future
+        //public event EventHandler<CommandRecievedEventArgs> HandlerDispatchCommand;
 
         private IImageController imageController;
         private ILoggingService loggingService;
@@ -29,7 +31,7 @@ namespace ImageService.Server
         {
             string[] extensions = { "*.jpg", "*.png", "*.gif", "*.bmp" };
             IDirectoryHandler directoryHandler = new DirectoryHandler(path, this.imageController, this.loggingService, extensions);
-            SendCommand += directoryHandler.OnCommandRecieved;
+            //HandlerDispatchCommand += directoryHandler.OnCommandRecieved;
             StopHandler += directoryHandler.CloseFileWatcher;
             directoryHandler.DirectoryClose += CloseHandler;
             directoryHandler.StartHandlingDirectory();
@@ -41,7 +43,7 @@ namespace ImageService.Server
             if (sender is IDirectoryHandler)
             {
                 IDirectoryHandler handler = (IDirectoryHandler)sender;
-                SendCommand -= handler.OnCommandRecieved;
+                //HandlerDispatchCommand -= handler.OnCommandRecieved;
             }
         }
 
