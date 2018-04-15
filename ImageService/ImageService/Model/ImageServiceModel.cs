@@ -15,15 +15,47 @@ namespace ImageService.Model
     public class ImageServiceModel : IImageServiceModel
     {
         #region Members
-        private string m_OutputFolder;            // The Output Folder
-        private int m_thumbnailSize;              // The Size Of The Thumbnail Size
-
-        public string AddFile(string path, out bool result)
-        {
-            throw new NotImplementedException();
-        }
-
+        private string outputDirectory;
+        private int thumbnailSize;
         #endregion
 
+        public ImageServiceModel(string output, int tSize)
+        {
+            this.outputDirectory = output;
+            this.thumbnailSize = tSize;
+        }
+        public string AddFile(string[] args, out bool result)
+        {
+            string newFilePath = " ";
+            try
+            {
+                if (args.Length != 2)
+                {
+                    result = false;
+                    return "Error: Not enough parameters - file name " + args[0] +" or path " + args[1] +" are incorrect";
+                }
+
+                string filePath = args[0];
+                string fileName = args[1];
+                if (!File.Exists(filePath))
+                {
+                    result = false;
+                    return "Error: the path " + args[0] + " does not exist!";
+                }
+                if (!Directory.Exists(this.outputDirectory))
+                {
+                    // create directory
+                    DirectoryInfo directoryInfo = Directory.CreateDirectory(this.outputDirectory);
+                    // make directory hidden
+                    directoryInfo.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
+                }
+
+                string year = 
+            } catch (Exception e)
+            {
+                result = false;
+                return "Path file exception: " + newFilePath + ": " + e.ToString();
+            }
+        }
     }
 }

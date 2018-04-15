@@ -57,26 +57,20 @@ namespace ImageService
         {
             // init components (eventLog)
             InitializeComponent();
+            AppConfigParser appConfigParser = new AppConfigParser();
 
-            // in case of parameters for launch
-            string eventSourceName = "MySource";
-            string logName = "MyNewLog";
-            if (args.Count() > 0)
+            
+            if (!EventLog.SourceExists(appConfigParser.LogName))
             {
-                eventSourceName = args[0];
-            }
-            if (args.Count() > 1)
-            {
-                logName = args[1];
-            }
-            if (!System.Diagnostics.EventLog.SourceExists(eventSourceName))
-            {
-                System.Diagnostics.EventLog.CreateEventSource(
-                    eventSourceName, logName);
+                EventLog.CreateEventSource(
+                    appConfigParser.SourceName, appConfigParser.LogName);
             }
             // assign parameters to log after init
-            eventLog.Source = eventSourceName;
-            eventLog.Log = logName;
+            eventLog.Source = appConfigParser.SourceName;
+            eventLog.Log = appConfigParser.LogName;
+
+            // init image model
+            IImageServiceModel imageServiceModel = new ImageServiceModel(appConfigParser.OutputDirectory, appConfigParser.ThumbnailSize);
 
             // init loggingModel
             loggingModel = new LoggingService();
