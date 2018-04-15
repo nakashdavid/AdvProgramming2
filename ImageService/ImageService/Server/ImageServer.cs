@@ -21,33 +21,52 @@ namespace ImageService.Server
         private IImageController imageController;
         private ILoggingService loggingService;
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="loggingService"></param>
+        /// <param name="imageServiceModel"></param>
         public ImageServer(ILoggingService loggingService, IImageServiceModel imageServiceModel)
         {
             this.imageController = new ImageController(imageServiceModel);
             this.loggingService = loggingService;
         }
 
+        /// <summary>
+        /// This func adds a directory handler according to path given.
+        /// </summary>
+        /// <param name="path"></param>
         public void AddDirectoryHandler(string path) // path to directory
         {
             string[] extensions = { "*.jpg", "*.png", "*.gif", "*.bmp" };
             IDirectoryHandler directoryHandler = new DirectoryHandler(path, this.imageController, this.loggingService, extensions);
+            // in future
             //HandlerDispatchCommand += directoryHandler.OnCommandRecieved;
             StopHandler += directoryHandler.CloseFileWatcher;
             directoryHandler.DirectoryClose += CloseHandler;
             directoryHandler.StartHandlingDirectory();
         }
 
-        public void CloseHandler(object sender, DirectoryCloseEventArgs args)
+        /// <summary>
+        /// Closes the directory handler when required..
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="args"></param>
+        public void CloseHandler(object source, DirectoryCloseEventArgs args)
         {
-            //args.DirectoryPath
-            if (sender is IDirectoryHandler)
+            
+            if (source is IDirectoryHandler)
             {
-                IDirectoryHandler handler = (IDirectoryHandler)sender;
+                IDirectoryHandler handler = (IDirectoryHandler)source;
+                // future
                 //HandlerDispatchCommand -= handler.OnCommandRecieved;
             }
         }
 
-        public void CloseAll()
+        /// <summary>
+        /// Closes all the handlers for the imageServer (invoked when service is terminated)..
+        /// </summary>
+        public void CloseImageServer()
         {
             StopHandler.Invoke(this, new DirectoryCloseEventArgs("*", null));
         }

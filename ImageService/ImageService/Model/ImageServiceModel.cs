@@ -18,12 +18,23 @@ namespace ImageService.Model
         private string outputDirectory;
         private int thumbnailSize;
         #endregion
-
+        /// <summary>
+        /// 
+        /// constructor.
+        /// </summary>
+        /// <param name="output"></param>
+        /// <param name="tSize"></param>
         public ImageServiceModel(string output, int tSize)
         {
             this.outputDirectory = output;
             this.thumbnailSize = tSize;
         }
+        /// <summary>
+        /// Adds a file according to args (has path and filename)
+        /// </summary>
+        /// <param name="args">path and filename</param>
+        /// <param name="result">errors or success</param>
+        /// <returns></returns>
         public string AddFile(string[] args, out bool result)
         {
             string newFilePath = " ";
@@ -63,15 +74,22 @@ namespace ImageService.Model
             } catch (Exception e)
             {
                 result = false;
-                return "Path file exception: " + newFilePath + ": " + e.ToString();
+                return "Path-file exception at: " + newFilePath + ": " + e.ToString();
             }
         }
 
-
+        /// <summary>
+        /// Implemented this instead of copy+delete to make for a cleaner code..
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="fileName"></param>
+        /// <param name="outputFolder"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
         public string MoveFile(string filePath, string fileName, string outputFolder, out bool result)
         {
-            string newFilePath = " ";
-
+            string newPath = " ";
+            // get image details
             string year = ImageSettings.GetImageDate(filePath).Year.ToString();
             string month = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(ImageSettings.GetImageDate(filePath).Month).ToString();
 
@@ -82,24 +100,24 @@ namespace ImageService.Model
             // make thumbnail dir
             string thumbnailOutputFolder = outputFolder + "\\thumbnails\\" + year + "\\" + month;
             Directory.CreateDirectory(thumbnailOutputFolder);
-
+            // 
             string underscore = "_";
-            newFilePath = dateOutputFolder + "\\" + fileName;
+            newPath = dateOutputFolder + "\\" + fileName;
 
             // if same name file already exists add '_' to it
-            while (File.Exists(newFilePath))
+            while (File.Exists(newPath))
             {
                 fileName = underscore + fileName;
-                newFilePath = dateOutputFolder + "\\" + fileName;
+                newPath = dateOutputFolder + "\\" + fileName;
             }
-
+            // thumbnail dir path
             string thumbnailPath = thumbnailOutputFolder + "\\" + fileName;
-            
-            File.Move(filePath, newFilePath);
-
-            Image img = Image.FromFile(newFilePath);
+            // move file after all is done
+            File.Move(filePath, newPath);
+            // get thumbnail out of image
+            Image img = Image.FromFile(newPath);
             Image thumbnail = img.GetThumbnailImage(thumbnailSize, thumbnailSize, () => false, IntPtr.Zero);
-
+            // save thumbnail
             thumbnail.Save(Path.ChangeExtension(thumbnailPath, "thumb"));
             
             // dispose of image and thumbnail

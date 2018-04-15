@@ -27,7 +27,13 @@ namespace ImageService.Controller.Handlers
 
         public event EventHandler<DirectoryCloseEventArgs> DirectoryClose;              // The Event That Notifies that the Directory is being closed
 
-
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="imageController"></param>
+        /// <param name="loggingService"></param>
+        /// <param name="extensions"></param>
         public DirectoryHandler(string path, IImageController imageController, ILoggingService loggingService, string []extensions)
         {
             this.directoryPath = path;
@@ -36,7 +42,10 @@ namespace ImageService.Controller.Handlers
             this.extensions = extensions;
             this.directoryWatchers = new List<FileSystemWatcher>();
         }
-
+        /// <summary>
+        /// Puts the directory watcher on the directory path to observe for changes, 
+        /// as well as assign the subscribers to our event.
+        /// </summary>
         public void StartHandlingDirectory()
         {
             for (int i = 0; i < extensions.Length; i++)
@@ -48,6 +57,12 @@ namespace ImageService.Controller.Handlers
             }
         }
 
+        /// <summary>
+        /// Close file watcher (called before service ends 
+        /// or if for some reason we need to close the listening it beforehand).
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="args"></param>
         public void CloseFileWatcher(object source, DirectoryCloseEventArgs args)
         {
             if (args.DirectoryPath.Equals(this.directoryPath) || args.DirectoryPath.Equals("*"))
@@ -63,16 +78,25 @@ namespace ImageService.Controller.Handlers
             }
         }
 
+        /// <summary>
+        /// Notifies that a file was created..
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void FileCreated(object sender, FileSystemEventArgs args)
         {
             // call this when the command is received
             string[] arguments = new string[] { args.FullPath, args.Name };
-            int commandID = (int)CommandCategoryEnum.ADD_FILE;
+            int commandID = (int)CommandCategoryEnum.AddFile;
             CommandRecievedEventArgs eventArgs = new CommandRecievedEventArgs(commandID, arguments, this.directoryPath);
             OnCommandRecieved(sender, eventArgs);
         }
 
-
+        /// <summary>
+        /// When the directory handler receives a command from the controller.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="eventArgs"></param>
         public void OnCommandRecieved(object sender, CommandRecievedEventArgs eventArgs)
         {
             if (eventArgs.RequestDirPath.Equals(this.directoryPath) || eventArgs.RequestDirPath.Equals("*"))

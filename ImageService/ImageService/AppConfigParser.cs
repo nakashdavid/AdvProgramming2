@@ -15,6 +15,9 @@ namespace ImageService
         public string OutputDirectory { get; }
         public int ThumbnailSize { get; }
 
+        /// <summary>
+        /// This class is in charge of parsing the given App.config file using ConfigurationManager.
+        /// </summary>
         public AppConfigParser()
         {
             this.Handler = ConfigurationManager.AppSettings["Handler"].Split(';');

@@ -14,7 +14,6 @@ using ImageService.Model;
 using ImageService.Logging;
 using ImageService.Logging.Model;
 using System.Configuration;
-using ImageService.Infrastructure;
 
 namespace ImageService
 {
@@ -52,7 +51,10 @@ namespace ImageService
         private EventLog eventLog;
         private int eventID = 1;
 
-        // ImageService constructor
+        /// <summary>
+        /// ImageService Constructor.
+        /// </summary>
+        /// <param name="args"></param>
         public ImageService(string[] args)
         {
             // init components (eventLog)
@@ -91,24 +93,31 @@ namespace ImageService
         private static extern bool SetServiceStatus(IntPtr handle, ref ServiceStatus serviceStatus); // set service func
         
 
-        // Here You will Use the App Config!
+        /// <summary>
+        /// Method invoked on service Start.
+        /// </summary>
+        /// <param name="args"></param>
         protected override void OnStart(string[] args)
         {
             // Update the service state to Start Pending.  
-            ServiceStatus serviceStatus = new ServiceStatus();
-            serviceStatus.dwCurrentState = ServiceState.SERVICE_START_PENDING;
-            serviceStatus.dwWaitHint = 100000;
-            SetServiceStatus(this.ServiceHandle, ref serviceStatus);
+            ServiceStatus serviceStatusPending = new ServiceStatus();
+            serviceStatusPending.dwCurrentState = ServiceState.SERVICE_START_PENDING;
+            serviceStatusPending.dwWaitHint = 100000;
+            SetServiceStatus(this.ServiceHandle, ref serviceStatusPending);
 
             // write in the log
             eventLog.WriteEntry("Starting ImageService..");
 
             // Update the service state to Running.
-            serviceStatus.dwCurrentState = ServiceState.SERVICE_RUNNING;
-            SetServiceStatus(this.ServiceHandle, ref serviceStatus);
+            ServiceStatus serviceStatusRunning = new ServiceStatus();
+            serviceStatusRunning.dwCurrentState = ServiceState.SERVICE_RUNNING;
+            SetServiceStatus(this.ServiceHandle, ref serviceStatusRunning);
             eventLog.WriteEntry("Service Running.");
         }
 
+        /// <summary>
+        /// Method invoked on Continue of the service.
+        /// </summary>
         protected override void OnContinue()
         {
             ServiceStatus serviceStatus = new ServiceStatus();
@@ -116,6 +125,9 @@ namespace ImageService
             eventLog.WriteEntry("Service Continued.");
           
         }
+        /// <summary>
+        /// Method invoked when the service Stops.
+        /// </summary>
         protected override void OnStop()
         {
             // Update the service state to Stop Pending.  
@@ -124,12 +136,9 @@ namespace ImageService
             SetServiceStatus(this.ServiceHandle, ref serviceStatusStopPending);
 
             // stopping logic here
-
             eventLog.WriteEntry("Service Stop-Pending.");
-            this.imageServer.CloseAll();
-
-
-
+            this.imageServer.CloseImageServer();
+            
             // Now update service state to Stopped.
             ServiceStatus serviceStatusStopped = new ServiceStatus();
             serviceStatusStopped.dwCurrentState = ServiceState.SERVICE_STOPPED;
@@ -138,7 +147,11 @@ namespace ImageService
         }
 
 
-        // Logging Logic here
+        /// <summary>
+        /// This method writes the event args passed by the event out to the eventLogger.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="eventArgs"></param>
         public void OnMsg(Object sender, MessageRecievedEventArgs eventArgs)
         {
             switch(eventArgs.Status)

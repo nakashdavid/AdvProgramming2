@@ -15,9 +15,14 @@ namespace ImageService.Controller
         private IImageServiceModel imageServiceModel;                      // The Model Object
         private Dictionary<int, ICommand> commands;
 
-        private class TaskResult
+        private class TaskRes
         {
-            public TaskResult(string result, bool boolean)
+            /// <summary>
+            /// Custom class to save the task's result and success parameter.
+            /// </summary>
+            /// <param name="result"></param>
+            /// <param name="boolean"></param>
+            public TaskRes(string result, bool boolean)
             {
                 this.result = result;
                 this.boolean = boolean;
@@ -26,31 +31,43 @@ namespace ImageService.Controller
             public bool boolean { get; set; }
         }
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="Model"></param>
         public ImageController(IImageServiceModel Model)
         {
             this.imageServiceModel = Model;                    // Storing the Model Of The System
             commands = new Dictionary<int, ICommand>()
             {
-                { (int) CommandCategoryEnum.ADD_FILE, new NewFileCommand(this.imageServiceModel) }
+                { (int) CommandCategoryEnum.AddFile, new NewFileCommand(this.imageServiceModel) }
                 // For Now will contain NEW_FILE_COMMAND
             };
         }
+
+        /// <summary>
+        /// Execute the command given by the directory handler, outputs error if command doesn't exist.
+        /// </summary>
+        /// <param name="commandID"></param>
+        /// <param name="args"></param>
+        /// <param name="resultSuccesful"></param>
+        /// <returns></returns>
         public string ExecuteCommand(int commandID, string[] args, out bool resultSuccesful)
         {
 
             // Write Code Here
             if (commands.ContainsKey(commandID))
             {
-                Task<TaskResult> task = new Task<TaskResult>(() =>
+                Task<TaskRes> task = new Task<TaskRes>(() =>
                 {
                     bool boolean;
                     ICommand command = commands[commandID];
                     string result = command.Execute(args, out boolean);
-                    return new TaskResult(result, boolean);
+                    return new TaskRes(result, boolean);
                 });
 
                 task.Start();
-                TaskResult taskRes = task.Result;
+                TaskRes taskRes = task.Result;
                 resultSuccesful = task.Result.boolean;
                 return taskRes.result;
 
