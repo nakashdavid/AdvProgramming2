@@ -11,4 +11,9 @@ namespace ImageService.Infrastructure.Enums
         NewFileCommand,
         CloseCommand
     }
+
+    public enum CommandClassificationEnum : int
+    {
+        ADD_FILE
+    }
 }

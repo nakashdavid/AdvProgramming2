@@ -15,15 +15,53 @@ namespace ImageService.Controller.Handlers
 {
     public class DirectoyHandler : IDirectoryHandler
     {
-        #region Members
-        private IImageController m_controller;              // The Image Processing Controller
-        private ILoggingService m_logging;
-        private FileSystemWatcher m_dirWatcher;             // The Watcher of the Dir
-        private string m_path;                              // The Path of directory
-        #endregion
 
+        #region Members
+        private string directoryPath;
+        private IImageController imageController;
+        private ILoggingService loggingService;
+        private string[] extensions;
+        private List<FileSystemWatcher> directoryWatchers;
+
+        #endregion
         public event EventHandler<DirectoryCloseEventArgs> DirectoryClose;              // The Event That Notifies that the Directory is being closed
 
+
+        public DirectoyHandler(string path, IImageController imageController, ILoggingService loggingService, string []extensions)
+        {
+            this.directoryPath = path;
+            this.imageController = imageController;
+            this.loggingService = loggingService;
+            this.extensions = extensions;
+            this.directoryWatchers = new List<FileSystemWatcher>();
+        }
+
+        public void StartHandlingDirectory()
+        {
+            for (int i = 0; i < extensions.Length; i++)
+            {
+                FileSystemWatcher directoryWatcher = new FileSystemWatcher(this.directoryPath, this.extensions[i]);
+                directoryWatcher.EnableRaisingEvents = true;
+                directoryWatcher.Created += new FileSystemEventHandler(FileCreated);
+                this.directoryWatchers.Add(directoryWatcher);
+            }
+
+            // Run through all the files and send to "add file"
+        }
+
+        public void CloseFileWatcher(object source, DirectoryCloseEventArgs args)
+        {
+            if (args.DirectoryPath.Equals(this.directoryPath) || args.DirectoryPath.Equals("*"))
+            {
+                // set watchers to not be able to send events anymore
+                foreach (FileSystemWatcher fileSystemWatcher in this.directoryWatchers)
+                {
+                    fileSystemWatcher.EnableRaisingEvents = false;
+                }
+                this.loggingService.Log(this, );
+
+            }
+        }
         public void OnCommandRecieved(object sender, CommandRecievedEventArgs e)
         {
             throw new NotImplementedException();

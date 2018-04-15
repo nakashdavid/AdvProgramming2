@@ -12,16 +12,11 @@ namespace ImageService.Logging
     {
         public event EventHandler<MessageRecievedEventArgs> MessageRecieved;
 
-        public void Log(string message, MessageTypeEnum type)
+        public void Log(object source, MessageRecievedEventArgs args)
         {
-            // Create a MessageReceivedEventArgs.
-            MessageRecievedEventArgs msgReceived = new MessageRecievedEventArgs
-            {
-                Status = type,
-                Message = message
-            };
+            
             // Notify all of the subscribers.
-            MessageRecieved(this, msgReceived);
+            MessageRecieved(source, args);
         }
     }
 }

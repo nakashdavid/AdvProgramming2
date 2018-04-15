@@ -15,23 +15,47 @@ namespace ImageService.Controller
         private IImageServiceModel m_Model;                      // The Model Object
         private Dictionary<int, ICommand> commands;
 
+        private class TaskResult
+        {
+            public TaskResult(string result, bool boolean)
+            {
+                this.result = result;
+                this.boolean = boolean;
+            }
+            public string result { get; set; }
+            public bool boolean { get; set; }
+        }
+
         public ImageController(IImageServiceModel Model)
         {
             m_Model = Model;                    // Storing the Model Of The System
             commands = new Dictionary<int, ICommand>()
             {
-				// For Now will contain NEW_FILE_COMMAND
+                { (int) CommandClassificationEnum.ADD_FILE, new NewFileCommand(this.m_Model) }
+                // For Now will contain NEW_FILE_COMMAND
             };
         }
         public string ExecuteCommand(int commandID, string[] args, out bool resultSuccesful)
         {
 
             // Write Code Here
-
-
-            // delete these
-            resultSuccesful = true;
-            return null;
+            if (commands.ContainsKey(commandID))
+            {
+                Task<TaskResult> task = new Task<TaskResult>(() =>
+                {
+                    bool boolean;
+                    ICommand command = commands[commandID];
+                    string result = command.Execute(args, out boolean);
+                    return new TaskResult(result, boolean);
+                });
+                task.Start();
+                TaskResult taskResult = task.Result;
+                resultSuccesful = task.Result.boolean;
+                return taskResult.result;
+            } else {
+                resultSuccesful = false;
+                return "Command doesn't exist!";
+            }
         }
     }
 }

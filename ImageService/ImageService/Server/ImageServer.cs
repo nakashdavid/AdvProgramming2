@@ -13,15 +13,27 @@ namespace ImageService.Server
 {
     public class ImageServer
     {
-        #region Members
-        private IImageController m_controller;
-        private ILoggingService m_logging;
-        #endregion
-
         #region Properties
-        public event EventHandler<CommandRecievedEventArgs> CommandRecieved;          // The event that notifies about a new Command being recieved
+        public event EventHandler<CommandRecievedEventArgs> OnServerCommand;
+        public event EventHandler<DirectoryCloseEventArgs> OnStopHandler;
         #endregion
 
-       
+        #region Members
+        private IImageController imageController;
+        private ILoggingService loggingService;
+        #endregion
+
+        public ImageServer(ILoggingService loggingService, IImageServiceModel imageServiceModel)
+        {
+            this.imageController = new ImageController(imageServiceModel);
+            this.loggingService = loggingService;
+        }
+
+        public void AddDirectoryHandler(string path) // path to directory
+        {
+            string[] extensions = { "*.jpg", "*.png", "*.gif", "*.bmp" };
+           IDirectoryHandler directoryHandler = new DirectoyHandler()
+        }
+
     }
 }

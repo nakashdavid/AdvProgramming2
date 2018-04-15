@@ -45,12 +45,11 @@ namespace ImageService
     {
         
         private System.ComponentModel.IContainer components = null;
-        private System.Diagnostics.EventLog eventLog;
+        
 
         private ImageServer m_imageServer;          // The Image Server
-        private IImageServiceModel model;
-        private IImageController controller;
-        private ILoggingService loggingModel;
+    
+        private EventLog eventLog;
         private int eventID = 1;
 
         // ImageService constructor
@@ -79,7 +78,7 @@ namespace ImageService
             eventLog.Source = eventSourceName;
             eventLog.Log = logName;
 
-            // init loggingModels
+            // init loggingModel
             loggingModel = new LoggingService();
             // subscribe our main Service to the LoggingService
             loggingModel.MessageRecieved += OnMsg;
