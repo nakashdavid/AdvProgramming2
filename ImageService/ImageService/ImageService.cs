@@ -47,7 +47,7 @@ namespace ImageService
         private System.ComponentModel.IContainer components = null;
         
 
-        private ImageServer m_imageServer;          // The Image Server
+        private ImageServer imageServer;          // The Image Server
     
         private EventLog eventLog;
         private int eventID = 1;
@@ -73,9 +73,17 @@ namespace ImageService
             IImageServiceModel imageServiceModel = new ImageServiceModel(appConfigParser.OutputDirectory, appConfigParser.ThumbnailSize);
 
             // init loggingModel
-            loggingModel = new LoggingService();
+            ILoggingService loggingModel = new LoggingService();
             // subscribe our main Service to the LoggingService
             loggingModel.MessageRecieved += OnMsg;
+
+            this.imageServer = new ImageServer(loggingModel, imageServiceModel);
+
+            // add directory handler for each directory from AppConfig
+            foreach (string directoryPath in appConfigParser.Handler)
+            {
+                this.imageServer.AddDirectoryHandler(directoryPath);
+            }
 
         }
 
@@ -118,7 +126,7 @@ namespace ImageService
             // stopping logic here
 
             eventLog.WriteEntry("Service Stop-Pending.");
-
+            this.imageServer.CloseAll();
 
 
 

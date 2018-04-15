@@ -16,7 +16,5 @@ namespace ImageService.Logging.Model
             this.Status = status;
             this.Message = message;
         }
-
-        
     }
 }

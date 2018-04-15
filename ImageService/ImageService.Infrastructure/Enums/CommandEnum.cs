@@ -12,7 +12,7 @@ namespace ImageService.Infrastructure.Enums
         CloseCommand
     }
 
-    public enum CommandClassificationEnum : int
+    public enum CommandCategoryEnum : int
     {
         ADD_FILE
     }

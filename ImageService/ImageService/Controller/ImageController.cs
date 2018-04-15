@@ -12,7 +12,7 @@ namespace ImageService.Controller
 {
     public class ImageController : IImageController
     {
-        private IImageServiceModel m_Model;                      // The Model Object
+        private IImageServiceModel imageServiceModel;                      // The Model Object
         private Dictionary<int, ICommand> commands;
 
         private class TaskResult
@@ -28,10 +28,10 @@ namespace ImageService.Controller
 
         public ImageController(IImageServiceModel Model)
         {
-            m_Model = Model;                    // Storing the Model Of The System
+            this.imageServiceModel = Model;                    // Storing the Model Of The System
             commands = new Dictionary<int, ICommand>()
             {
-                { (int) CommandClassificationEnum.ADD_FILE, new NewFileCommand(this.m_Model) }
+                { (int) CommandCategoryEnum.ADD_FILE, new NewFileCommand(this.imageServiceModel) }
                 // For Now will contain NEW_FILE_COMMAND
             };
         }
@@ -48,13 +48,17 @@ namespace ImageService.Controller
                     string result = command.Execute(args, out boolean);
                     return new TaskResult(result, boolean);
                 });
+
                 task.Start();
-                TaskResult taskResult = task.Result;
+                TaskResult taskRes = task.Result;
                 resultSuccesful = task.Result.boolean;
-                return taskResult.result;
+                return taskRes.result;
+
             } else {
+
                 resultSuccesful = false;
                 return "Command doesn't exist!";
+
             }
         }
     }

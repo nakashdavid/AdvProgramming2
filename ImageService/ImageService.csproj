@@ -36,6 +36,7 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -47,9 +48,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppConfigParser.cs" />
+    <Compile Include="ImageService\Model\ImageSettings.cs" />
     <Compile Include="ImageService\Commands\ICommand.cs" />
     <Compile Include="ImageService\Commands\NewFileCommand.cs" />
-    <Compile Include="ImageService\Controller\Handlers\DirectoyHandler.cs" />
+    <Compile Include="ImageService\Controller\Handlers\DirectoryHandler.cs" />
     <Compile Include="ImageService\Controller\Handlers\IDirectoryHandler.cs" />
     <Compile Include="ImageService\Controller\IImageController.cs" />
     <Compile Include="ImageService\Controller\ImageController.cs" />

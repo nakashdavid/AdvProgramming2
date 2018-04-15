@@ -10,19 +10,18 @@ namespace ImageService.Commands
 {
     public class NewFileCommand : ICommand
     {
-        private IImageServiceModel m_Model;
+        private IImageServiceModel imageServiceModel;
 
         public NewFileCommand(IImageServiceModel Model)
         {
-            m_Model = Model;            // Storing the Model
+            this.imageServiceModel = Model;            // Storing the Model
         }
 
         public string Execute(string[] args, out bool result)
         {
             // The String Will Return the New Path if result = true, and will return the error message
-           
-            result = true; // remove this
-            return null; // remove this
+
+            return this.imageServiceModel.AddFile(args, out result);
         }
     }
 }
